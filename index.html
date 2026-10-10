@@ -2,1075 +2,621 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a0908">
 <title>Catch 22 — День Рождения</title>
+<link rel="preload" href="assets/hbd.mp3" as="audio">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto+Mono:wght@400;700&family=Russo+One&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto+Mono:wght@400;500;700&family=Russo+One&display=swap');
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --walkman-body: #1a1a1a;
-    --walkman-silver: #c0c0c0;
-    --walkman-accent: #ff6b00;
-    --cassette-body: #f5f0e1;
-    --cassette-label: #d4a843;
-    --reel-color: #222;
-    --tape-color: #3a2010;
+    --amber: #ff6b00;
+    --amber-soft: #ff9248;
+    --lcd: #7dff8a;
   }
 
-  html, body {
-    width: 100%; height: 100%;
-    overflow-x: hidden;
-    font-family: 'Roboto Mono', monospace;
-    background: #0a0a0a;
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    font-family: 'Roboto Mono', ui-monospace, monospace;
     color: #fff;
+    background: #0a0908 url('assets/bg.jpg') center / cover no-repeat fixed;
     -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
     user-select: none;
   }
 
-  body {
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(120% 80% at 50% 0%, rgba(255,107,0,.16), transparent 60%),
+      linear-gradient(180deg, rgba(6,5,4,.72) 0%, rgba(6,5,4,.86) 45%, #060504 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-    min-height: 100vh;
-    min-height: 100dvh;
-    padding: 0;
-    background:
-      radial-gradient(ellipse at 50% 20%, rgba(255,107,0,0.08) 0%, transparent 60%),
-      linear-gradient(180deg, #0a0a0a 0%, #111 50%, #0a0a0a 100%);
+    padding: max(14px, env(safe-area-inset-top)) 0 calc(28px + env(safe-area-inset-bottom));
   }
 
-  /* === WALKMAN DEVICE === */
-  .walkman {
+  /* =====================  ПЛЕЕР (всё в координатах 690×690)  ===================== */
+  .hero {
+    width: min(94vw, 440px);
     position: relative;
-    width: min(92vw, 420px);
-    aspect-ratio: 420 / 700;
-    margin-top: 2vh;
-    flex-shrink: 0;
   }
 
-  .walkman-body {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 30%, #111 70%, #1e1e1e 100%);
-    border-radius: 28px;
-    border: 2px solid #333;
-    box-shadow:
-      0 20px 60px rgba(0,0,0,0.8),
-      inset 0 1px 0 rgba(255,255,255,0.05),
-      inset 0 -1px 0 rgba(0,0,0,0.5);
-    overflow: hidden;
-  }
-
-  /* Brushed metal texture */
-  .walkman-body::before {
+  .hero::after {
     content: '';
     position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 1px,
-      rgba(255,255,255,0.01) 1px,
-      rgba(255,255,255,0.01) 2px
-    );
-    border-radius: 26px;
+    inset: 6% -12% -6% -12%;
+    background: radial-gradient(60% 45% at 50% 45%, rgba(255,122,20,.20), transparent 70%);
+    filter: blur(26px);
+    z-index: -1;
     pointer-events: none;
   }
 
-  /* === BRAND LABEL === */
-  .brand-area {
-    position: absolute;
-    top: 3%;
-    left: 6%;
-    right: 6%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    z-index: 5;
-  }
-
-  .brand-sony {
-    font-family: 'Roboto Mono', monospace;
-    font-weight: 700;
-    font-size: clamp(10px, 2.8vw, 16px);
-    color: var(--walkman-silver);
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    text-shadow: 0 0 10px rgba(192,192,192,0.3);
-  }
-
-  .brand-model {
-    font-family: 'Roboto Mono', monospace;
-    font-size: clamp(7px, 1.8vw, 10px);
-    color: #888;
-    letter-spacing: 2px;
-  }
-
-  /* === CASSETTE WINDOW === */
-  .cassette-window {
-    position: absolute;
-    top: 12%;
-    left: 8%;
-    right: 8%;
-    height: 38%;
-    background: #0d0d0d;
-    border-radius: 16px;
-    border: 2px solid #2a2a2a;
-    box-shadow:
-      inset 0 4px 16px rgba(0,0,0,0.8),
-      inset 0 -1px 0 rgba(255,255,255,0.03);
-    overflow: hidden;
-  }
-
-  /* Cassette tape visual */
-  .cassette {
-    position: absolute;
-    inset: 8%;
-    background: linear-gradient(180deg, var(--cassette-body) 0%, #e8e0cc 100%);
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  }
-
-  /* Label on cassette */
-  .cassette-label {
-    position: absolute;
-    top: 12%;
-    left: 10%;
-    right: 10%;
-    height: 32%;
-    background: linear-gradient(135deg, #d4a843 0%, #c49530 50%, #d4a843 100%);
-    border-radius: 4px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(0,0,0,0.15);
-  }
-
-  .cassette-label .label-title {
-    font-family: 'Russo One', sans-serif;
-    font-size: clamp(9px, 2.6vw, 15px);
-    color: #1a1a1a;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    text-shadow: 0 1px 0 rgba(255,255,255,0.3);
-  }
-
-  .cassette-label .label-sub {
-    font-family: 'Roboto Mono', monospace;
-    font-size: clamp(5px, 1.4vw, 8px);
-    color: #3a2a10;
-    letter-spacing: 2px;
-    margin-top: 2px;
-  }
-
-  /* Cassette window stripes */
-  .cassette-stripes {
-    position: absolute;
-    bottom: 10%;
-    left: 18%;
-    right: 18%;
-    height: 28%;
-    display: flex;
-    gap: 2px;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .stripe {
-    width: 100%;
-    height: 2px;
-    background: rgba(0,0,0,0.06);
-    border-radius: 1px;
-  }
-
-  /* === REELS === */
-  .reels-area {
-    position: absolute;
-    bottom: 8%;
-    left: 12%;
-    right: 12%;
-    height: 35%;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    z-index: 2;
-  }
-
-  .reel {
-    width: 32%;
-    aspect-ratio: 1;
+  .player {
     position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    filter: drop-shadow(0 24px 40px rgba(0,0,0,.75));
+    transition: filter .6s ease;
+  }
+  .player.is-playing {
+    filter: drop-shadow(0 24px 40px rgba(0,0,0,.75)) drop-shadow(0 0 22px rgba(255,110,20,.22));
   }
 
-  .reel-hub {
+  /* слой 1 — динамический: бобины, вращаются */
+  .reel-layer { position: absolute; inset: 0; z-index: 1; }
+  .reel {
     position: absolute;
-    inset: 20%;
-    background: radial-gradient(circle, #444 0%, #2a2a2a 50%, #1a1a1a 100%);
-    border-radius: 50%;
-    border: 2px solid #555;
-    box-shadow:
-      0 0 8px rgba(0,0,0,0.5),
-      inset 0 2px 4px rgba(255,255,255,0.1);
+    width: 37.1%;                 /* 256/690 */
+    aspect-ratio: 1;
+    will-change: transform;
+    transform: translateZ(0);
   }
+  .reel img { width: 100%; height: 100%; display: block; }
+  .reel-a { left: 13.19%; top: 20.87%; }   /* центр (219,272) */
+  .reel-b { left: 50.72%; top: 20.87%; }   /* центр (478,272) */
 
-  /* Hub spokes */
-  .reel-hub::before {
-    content: '';
+  @keyframes spin-ccw { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+  .reel-a { animation: spin-ccw 5.6s linear infinite; animation-play-state: paused; }
+  .reel-b { animation: spin-ccw 3.9s linear infinite; animation-play-state: paused; }
+  .is-playing .reel-a,
+  .is-playing .reel-b { animation-play-state: running; }
+
+  /* слой 2 — статика: корпус с вырезанными окнами под бобины */
+  .plate { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; display: block; }
+
+  /* слой 3 — блики стекла кассетного окна */
+  .gloss {
     position: absolute;
-    inset: 15%;
+    left: 6.1%; top: 13.3%; width: 87.4%; height: 49.3%;
+    border-radius: 3% / 4%;
+    z-index: 3;
+    pointer-events: none;
     background:
-      linear-gradient(0deg, transparent 45%, rgba(255,255,255,0.15) 45%, rgba(255,255,255,0.15) 55%, transparent 55%),
-      linear-gradient(90deg, transparent 45%, rgba(255,255,255,0.15) 45%, rgba(255,255,255,0.15) 55%, transparent 55%),
-      linear-gradient(60deg, transparent 45%, rgba(255,255,255,0.08) 45%, rgba(255,255,255,0.08) 55%, transparent 55%),
-      linear-gradient(-60deg, transparent 45%, rgba(255,255,255,0.08) 45%, rgba(255,255,255,0.08) 55%, transparent 55%);
-    border-radius: 50%;
-  }
-
-  /* Reel tape ring */
-  .reel-tape {
-    position: absolute;
-    inset: 5%;
-    border-radius: 50%;
-    border: 6px solid var(--tape-color);
-    border-right-color: transparent;
-    opacity: 0.6;
-  }
-
-  .reel-spinning .reel-hub,
-  .reel-spinning .reel-tape {
-    animation: spin 1.5s linear infinite;
-  }
-
-  .reel:first-child .reel-spinning .reel-hub,
-  .reel:first-child .reel-spinning .reel-tape {
-    animation: spin 1.5s linear infinite reverse;
-  }
-
-  .reel-spinning .reel-hub {
-    animation: spin 0.8s linear infinite;
-  }
-
-  .reel:first-child.reel-spinning .reel-hub {
-    animation: spin 1.2s linear infinite reverse;
-  }
-
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  /* === SCREEN / DISPLAY === */
-  .display {
-    position: absolute;
-    top: 54%;
-    left: 10%;
-    right: 10%;
-    height: 8%;
-    background: #0a1a0a;
-    border-radius: 6px;
-    border: 1px solid #2a3a2a;
-    box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+      linear-gradient(112deg, rgba(255,255,255,.12) 0%, rgba(255,255,255,.03) 26%, transparent 42%),
+      linear-gradient(292deg, rgba(255,240,220,.06) 0%, transparent 34%);
+    box-shadow: inset 0 0 22px rgba(0,0,0,.30);
     overflow: hidden;
   }
+  .gloss::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(118deg, transparent 38%, rgba(255,255,255,.05) 46%, transparent 54%);
+  }
 
-  .display-text {
+  /* слой 4 — статические стикеры на корпусе (позиции в % от 690) */
+  .st {
+    position: absolute;
+    z-index: 4;
+    pointer-events: none;
+    height: auto;
+    width: auto;
+    filter: contrast(.94) saturate(.92) drop-shadow(0 1px 1px rgba(0,0,0,.6)) drop-shadow(0 3px 5px rgba(0,0,0,.42));
+    mix-blend-mode: multiply;
+    max-width: none;
+  }
+  .st-asv      { left: 3.19%;  top: 2.03%;   height: 7.83%;  transform: rotate(-6deg); }
+  .st-banana   { left: 21.74%; top: 1.16%;   height: 11.30%; transform: rotate(10deg); }
+  .st-disco    { left: 34.78%; top: 0.58%;   height: 10.14%; transform: rotate(-4deg); }
+  .st-love22   { left: 76.52%; top: 0%;      height: 12.75%; transform: rotate(7deg); }
+  .st-year22   { left: 2.03%;  top: 62.32%;  height: 14.49%; transform: rotate(-6deg); }
+  .st-blond    { left: 21.74%; top: 70.43%;  height: 5.80%;  transform: rotate(-4deg); }
+  .st-lastcall { left: 68.12%; top: 63.19%;  height: 13.91%; transform: rotate(4deg); }
+  .st-kanye    { left: 86.96%; top: 33.62%;  height: 12.17%; transform: rotate(6deg); }
+  .st-flashing { left: 76.81%; top: 58.55%;  height: 5.80%;  transform: rotate(-8deg); }
+  .st-imcatch  { left: 67.83%; top: 86.38%;  height: 10.72%; transform: rotate(5deg); }
+
+  /* статичный блик по ламинату стикеров */
+  .st::after { content: none; }
+
+  /* надпись-статус на корпусе под окном */
+  .readout {
+    position: absolute;
+    left: 8.7%; top: 90.6%; width: 35%;
+    z-index: 5;
     font-family: 'Press Start 2P', monospace;
-    font-size: clamp(5px, 1.6vw, 9px);
-    color: #4aff4a;
-    text-shadow: 0 0 8px rgba(74,255,74,0.5);
-    letter-spacing: 1px;
+    font-size: clamp(4.5px, 1.3vw, 7.5px);
+    color: var(--lcd);
+    text-shadow: 0 0 6px rgba(90,255,120,.45);
     white-space: nowrap;
-    animation: none;
+    overflow: hidden;
+    opacity: .9;
   }
-
-  .display-text.scrolling {
-    animation: scroll-text 8s linear infinite;
-  }
-
-  @keyframes scroll-text {
-    0% { transform: translateX(100%); }
+  .readout.marquee { animation: marquee 9s linear infinite; }
+  @keyframes marquee {
+    0%   { transform: translateX(100%); }
     100% { transform: translateX(-100%); }
   }
 
-  /* === BUTTONS ROW === */
-  .controls {
+  /* слой 5 — управление: 5 невидимых зон поверх физических кнопок (y 552–584) */
+  .key {
     position: absolute;
-    top: 65%;
-    left: 6%;
-    right: 6%;
-    height: 12%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 3%;
-  }
-
-  .ctrl-btn {
-    width: 14%;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    border: 2px solid #444;
-    background: linear-gradient(145deg, #333 0%, #1a1a1a 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    top: 80.0%; height: 4.64%; width: 10.58%;
+    z-index: 6;
+    border: 0; background: transparent;
+    border-radius: 4px;
     cursor: pointer;
-    transition: all 0.15s;
-    box-shadow:
-      0 4px 12px rgba(0,0,0,0.5),
-      inset 0 1px 0 rgba(255,255,255,0.08);
-    -webkit-tap-highlight-color: transparent;
+    color: rgba(235,230,220,.55);
+    display: flex; align-items: center; justify-content: center;
+    font-family: inherit;
+    transition: background .15s ease, color .2s ease;
   }
-
-  .ctrl-btn:active {
-    transform: scale(0.93);
-    box-shadow:
-      0 2px 6px rgba(0,0,0,0.5),
-      inset 0 2px 4px rgba(0,0,0,0.3);
-  }
-
-  .ctrl-btn svg {
-    width: 40%;
-    height: 40%;
-    fill: #aaa;
-    transition: fill 0.2s;
-  }
-
-  .ctrl-btn.play-btn {
-    width: 18%;
-    border-color: var(--walkman-accent);
-    background: linear-gradient(145deg, #2a1a0a 0%, #1a0f05 100%);
-  }
-
-  .ctrl-btn.play-btn svg {
-    fill: var(--walkman-accent);
-  }
-
-  .ctrl-btn.play-btn.active {
-    border-color: #ff8833;
-    box-shadow:
-      0 0 20px rgba(255,107,0,0.3),
-      0 4px 12px rgba(0,0,0,0.5);
-  }
-
-  .ctrl-btn.play-btn.active svg {
-    fill: #ff8833;
-  }
-
-  /* === VOLUME SLIDER === */
-  .volume-area {
-    position: absolute;
-    top: 80%;
-    left: 12%;
-    right: 12%;
-    height: 6%;
-    display: flex;
-    align-items: center;
-    gap: 4%;
-  }
-
-  .vol-label {
-    font-size: clamp(6px, 1.5vw, 9px);
-    color: #666;
-    letter-spacing: 2px;
-    font-family: 'Roboto Mono', monospace;
-  }
-
-  .vol-track {
-    flex: 1;
-    height: 4px;
-    background: #2a2a2a;
-    border-radius: 2px;
-    position: relative;
-    border: 1px solid #333;
-  }
-
-  .vol-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #555, var(--walkman-accent));
-    border-radius: 2px;
-    width: 70%;
-    transition: width 0.2s;
-  }
-
-  .vol-knob {
-    position: absolute;
-    top: 50%;
-    left: 70%;
-    width: 14px;
-    height: 14px;
-    background: radial-gradient(circle at 40% 40%, #888, #444);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    border: 1px solid #555;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-  }
-
-  /* === HEADPHONE JACK === */
-  .hp-jack {
-    position: absolute;
-    top: 90%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 8%;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: #1a1a1a;
-    border: 2px solid #333;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
-  }
-
-  .hp-jack::after {
+  .key svg { width: 46%; height: 46%; fill: currentColor; display: block; }
+  .key:active, .key.pressed { background: rgba(0,0,0,.25); }
+  .key.on { color: #ffb066; }
+  .key.on::after {
     content: '';
-    position: absolute;
-    inset: 30%;
-    border-radius: 50%;
-    background: #0a0a0a;
-    border: 1px solid #222;
-  }
-
-  /* === CATCH22 STICKERS === */
-  .sticker {
-    position: absolute;
-    z-index: 10;
+    position: absolute; inset: 0;
+    border-radius: 4px;
+    box-shadow: 0 0 14px rgba(255,107,0,.45) inset;
     pointer-events: none;
   }
+  .k1 { left: 31.30%; }   /* 216 px */
+  .k2 { left: 44.78%; }   /* 309 px */
+  .k3 { left: 58.26%; }   /* 402 px */
 
-  .sticker-1 {
-    top: 2%;
-    right: 4%;
-    transform: rotate(12deg);
-    background: linear-gradient(135deg, #ff6b00, #ff3d00);
-    padding: 4px 10px;
-    border-radius: 4px;
-    font-family: 'Russo One', sans-serif;
-    font-size: clamp(6px, 1.8vw, 11px);
-    color: #fff;
-    letter-spacing: 1px;
-    box-shadow: 0 2px 8px rgba(255,107,0,0.4);
+  /* громкость — на нижней пластине слева от разъёма */
+  .vol {
+    position: absolute;
+    left: 8.7%; top: 95.4%; width: 35%; height: 2.4%;
+    z-index: 6;
+    display: flex; align-items: center;
+  }
+  .vol-track {
+    flex: 1; height: 100%; min-height: 14px;
+    position: relative; cursor: pointer; touch-action: none;
+    display: flex; align-items: center;
+  }
+  .vol-track::before {
+    content: '';
+    position: absolute; left: 0; right: 0; top: 50%;
+    height: 3px; margin-top: -1.5px; border-radius: 2px;
+    background: #1d1b19;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.25);
+  }
+  .vol-fill {
+    position: absolute; left: 0; top: 50%;
+    height: 3px; margin-top: -1.5px; border-radius: 2px;
+    width: 75%;
+    background: linear-gradient(90deg, #6a3a12, var(--amber));
+  }
+  .vol-knob {
+    position: absolute; top: 50%; left: 75%;
+    width: 13px; height: 13px; margin: -6.5px 0 0 -6.5px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 36% 32%, #8f8a80, #3a3733 70%, #24221f);
+    box-shadow: 0 2px 5px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.16);
   }
 
-  .sticker-2 {
-    bottom: 14%;
-    left: 3%;
-    transform: rotate(-8deg);
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
-    padding: 3px 8px;
-    border-radius: 3px;
-    font-family: 'Roboto Mono', monospace;
-    font-size: clamp(5px, 1.3vw, 8px);
-    color: rgba(255,255,255,0.5);
-    letter-spacing: 2px;
-  }
-
-  /* === INVITATION CARD === */
-  .invite-card {
-    width: min(92vw, 420px);
-    margin: 3vh auto 4vh;
-    padding: 24px 20px;
-    background: linear-gradient(135deg, rgba(255,107,0,0.06) 0%, rgba(255,61,0,0.03) 100%);
-    border: 1px solid rgba(255,107,0,0.2);
-    border-radius: 16px;
-    backdrop-filter: blur(10px);
+  /* =====================  ПРИГЛАШЕНИЕ  ===================== */
+  .card {
+    width: min(94vw, 440px);
+    margin: 22px 0 0;
+    padding: 22px 20px 20px;
     text-align: center;
+    border-radius: 18px;
+    background: linear-gradient(150deg, rgba(255,107,0,.075), rgba(255,61,0,.028) 55%, rgba(255,255,255,.014));
+    border: 1px solid rgba(255,107,0,.22);
+    backdrop-filter: blur(9px);
+    -webkit-backdrop-filter: blur(9px);
+    box-shadow: 0 18px 40px rgba(0,0,0,.45);
     position: relative;
     overflow: hidden;
   }
-
-  .invite-card::before {
+  .card::before {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: conic-gradient(
-      from 0deg,
-      transparent 0deg,
-      rgba(255,107,0,0.03) 60deg,
-      transparent 120deg
-    );
-    animation: rotate-glow 10s linear infinite;
+    inset: -60%;
+    background: conic-gradient(from 0deg, transparent 0deg, rgba(255,107,0,.055) 55deg, transparent 110deg);
+    animation: sweep 11s linear infinite;
     pointer-events: none;
   }
+  @keyframes sweep { to { transform: rotate(360deg); } }
+  .card > * { position: relative; z-index: 1; }
 
-  @keyframes rotate-glow {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  .invite-title {
+  .title {
     font-family: 'Russo One', sans-serif;
-    font-size: clamp(14px, 4.2vw, 22px);
-    color: #fff;
-    line-height: 1.4;
-    margin-bottom: 16px;
-    position: relative;
-    z-index: 1;
+    font-size: clamp(16px, 4.6vw, 23px);
+    line-height: 1.36;
+    margin-bottom: 14px;
+  }
+  .title em { font-style: normal; color: var(--amber); }
+
+  .rule {
+    width: 58%; height: 1px; margin: 0 auto 14px;
+    background: linear-gradient(90deg, transparent, rgba(255,107,0,.42), transparent);
   }
 
-  .invite-title .accent {
-    color: var(--walkman-accent);
+  .lead {
+    font-size: clamp(11.5px, 3.1vw, 14.5px);
+    line-height: 1.75;
+    color: rgba(255,255,255,.74);
+    margin-bottom: 18px;
   }
+  .lead b { color: var(--amber-soft); font-weight: 500; }
 
-  .invite-text {
-    font-family: 'Roboto Mono', monospace;
-    font-size: clamp(11px, 3vw, 15px);
-    color: rgba(255,255,255,0.7);
-    line-height: 1.8;
-    margin-bottom: 20px;
-    position: relative;
-    z-index: 1;
+  .facts {
+    display: flex; flex-direction: column; gap: 9px;
+    font-size: clamp(11.5px, 3.1vw, 14.5px);
+    color: rgba(255,255,255,.92);
   }
+  .fact { display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .fact i { font-style: normal; font-size: 1.15em; }
 
-  .invite-details {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    position: relative;
-    z-index: 1;
+  .hint {
+    margin-top: 15px;
+    font-size: clamp(8.5px, 2.3vw, 11px);
+    letter-spacing: .16em;
+    color: rgba(255,255,255,.32);
+    animation: breathe 2.4s ease-in-out infinite;
   }
+  @keyframes breathe { 0%,100% { opacity: .45; } 50% { opacity: 1; } }
 
-  .detail-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-family: 'Roboto Mono', monospace;
-    font-size: clamp(11px, 3vw, 14px);
-    color: rgba(255,255,255,0.85);
-  }
-
-  .detail-icon {
-    font-size: clamp(14px, 4vw, 18px);
-  }
-
-  .divider {
-    width: 60%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,107,0,0.3), transparent);
-    margin: 16px auto;
-    position: relative;
-    z-index: 1;
-  }
-
-  .play-hint {
-    font-family: 'Roboto Mono', monospace;
-    font-size: clamp(9px, 2.4vw, 12px);
-    color: rgba(255,255,255,0.3);
-    letter-spacing: 2px;
-    margin-top: 12px;
-    position: relative;
-    z-index: 1;
-    animation: pulse-hint 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse-hint {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 0.7; }
-  }
-
-  /* === FOOTER === */
   .footer {
-    font-family: 'Roboto Mono', monospace;
-    font-size: clamp(7px, 1.8vw, 10px);
-    color: rgba(255,255,255,0.15);
-    letter-spacing: 3px;
-    text-align: center;
-    padding: 20px;
-    margin-top: auto;
+    margin-top: 20px;
+    font-size: clamp(7px, 1.8vw, 9.5px);
+    letter-spacing: .34em;
+    color: rgba(255,255,255,.18);
   }
 
-  /* === CASSETTE TAPE ANIMATION === */
-  .tape-indicator {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 40%;
-    height: 2px;
-    background: var(--tape-color);
-    opacity: 0;
-    transition: opacity 0.3s;
+  @media (prefers-reduced-motion: reduce) {
+    .reel-a, .reel-b, .readout.marquee, .card::before, .hint { animation: none !important; }
   }
 
-  .cassette-window.playing .tape-indicator {
-    opacity: 0.4;
-    animation: tape-move 0.5s linear infinite;
+  /* подсказка, если браузер заблокировал звук */
+  .soundwall {
+    position: fixed; inset: 0; z-index: 50;
+    display: none;
+    align-items: center; justify-content: center;
+    background: rgba(4,3,3,.72);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    padding: 24px;
   }
-
-  @keyframes tape-move {
-    0% { transform: translate(-50%, -50%) scaleX(1); }
-    50% { transform: translate(-50%, -50%) scaleX(0.95); }
-    100% { transform: translate(-50%, -50%) scaleX(1); }
+  .soundwall.show { display: flex; }
+  .soundwall button {
+    font-family: 'Russo One', sans-serif;
+    font-size: clamp(13px, 3.6vw, 17px);
+    letter-spacing: .08em;
+    color: #fff;
+    padding: 16px 26px;
+    border: 1px solid rgba(255,107,0,.5);
+    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(255,107,0,.22), rgba(255,61,0,.10));
+    box-shadow: 0 0 30px rgba(255,107,0,.18);
+    cursor: pointer;
   }
-
-  /* === RESPONSIVE === */
-  @media (max-height: 650px) {
-    .walkman { margin-top: 1vh; }
-    .invite-card { margin: 1.5vh auto 2vh; padding: 16px 14px; }
-  }
-
-  @media (min-height: 900px) {
-    .walkman { margin-top: 4vh; }
-    .invite-card { margin: 4vh auto 5vh; }
-  }
-
-  @media (min-width: 768px) {
-    .walkman { width: 380px; }
-  }
-
-  /* Smooth page */
-  html { scroll-behavior: smooth; }
-
-  /* Audio visualizer glow */
-  .walkman.playing .walkman-body {
-    box-shadow:
-      0 20px 60px rgba(0,0,0,0.8),
-      0 0 40px rgba(255,107,0,0.08),
-      inset 0 1px 0 rgba(255,255,255,0.05);
-    transition: box-shadow 0.5s;
-  }
-
-  /* Equalizer bars */
-  .eq-bars {
-    position: absolute;
-    top: 55.5%;
-    right: 12%;
-    display: flex;
-    gap: 2px;
-    align-items: flex-end;
-    height: 5%;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .walkman.playing .eq-bars { opacity: 1; }
-
-  .eq-bar {
-    width: 2px;
-    background: var(--walkman-accent);
-    border-radius: 1px;
-    animation: eq-bounce 0.8s ease-in-out infinite alternate;
-  }
-
-  .eq-bar:nth-child(1) { height: 40%; animation-delay: 0s; }
-  .eq-bar:nth-child(2) { height: 70%; animation-delay: 0.1s; }
-  .eq-bar:nth-child(3) { height: 50%; animation-delay: 0.2s; }
-  .eq-bar:nth-child(4) { height: 80%; animation-delay: 0.15s; }
-  .eq-bar:nth-child(5) { height: 60%; animation-delay: 0.05s; }
-
-  @keyframes eq-bounce {
-    0% { transform: scaleY(0.3); }
-    100% { transform: scaleY(1); }
-  }
-
-  /* Cassette screws */
-  .screw {
-    position: absolute;
-    width: 5%;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, #555, #2a2a2a);
-    border: 1px solid #444;
-    z-index: 3;
-  }
-  .screw::after {
-    content: '';
-    position: absolute;
-    top: 40%;
-    left: 25%;
-    width: 50%;
-    height: 20%;
-    background: #222;
-    border-radius: 1px;
-  }
-  .screw-tl { top: 4%; left: 4%; }
-  .screw-tr { top: 4%; right: 4%; }
-  .screw-bl { bottom: 4%; left: 4%; }
-  .screw-br { bottom: 4%; right: 4%; }
+  .soundwall button:active { transform: scale(.97); }
 </style>
 </head>
 <body>
 
-<div class="walkman" id="walkman">
-  <div class="walkman-body">
-    <!-- Screws -->
-    <div class="screw screw-tl"></div>
-    <div class="screw screw-tr"></div>
-    <div class="screw screw-bl"></div>
-    <div class="screw screw-br"></div>
+<div class="page">
 
-    <!-- Brand -->
-    <div class="brand-area">
-      <span class="brand-sony">SONY</span>
-      <span class="brand-model">WM-F2015</span>
-    </div>
+  <!-- ====================  ПЛЕЕР  ==================== -->
+  <div class="hero">
+    <div class="player" id="player">
 
-    <!-- Stickers -->
-    <div class="sticker sticker-1">CATCH 22</div>
-    <div class="sticker sticker-2">FONTANKA 86</div>
-
-    <!-- Cassette Window -->
-    <div class="cassette-window" id="cassetteWindow">
-      <div class="cassette">
-        <div class="cassette-label">
-          <span class="label-title">CATCH 22</span>
-          <span class="label-sub">HAPPY BIRTHDAY MIX</span>
-        </div>
-        <div class="cassette-stripes">
-          <div class="stripe"></div>
-          <div class="stripe"></div>
-          <div class="stripe"></div>
-          <div class="stripe"></div>
-          <div class="stripe"></div>
-        </div>
+      <!-- слой 1 — динамический: бобины -->
+      <div class="reel-layer" aria-hidden="true">
+        <div class="reel reel-a"><img src="assets/reel.png" alt=""></div>
+        <div class="reel reel-b"><img src="assets/reel.png" alt=""></div>
       </div>
 
-      <!-- Reels -->
-      <div class="reels-area">
-        <div class="reel" id="reel1">
-          <div class="reel-tape"></div>
-          <div class="reel-hub" id="hub1"></div>
-        </div>
-        <div class="reel" id="reel2">
-          <div class="reel-tape"></div>
-          <div class="reel-hub" id="hub2"></div>
-        </div>
-      </div>
+      <!-- слой 2 — статика: корпус с отверстиями под бобины -->
+      <img class="plate" src="assets/player.png" alt="Кассетный плеер Catch 22">
 
-      <div class="tape-indicator"></div>
-    </div>
+      <!-- слой 3 — блики стекла -->
+      <div class="gloss" aria-hidden="true"></div>
 
-    <!-- Display -->
-    <div class="display">
-      <span class="display-text" id="displayText">CATCH22 ▶ READY</span>
-    </div>
+      <!-- слой 4 — статические стикеры -->
+      <img class="st st-asv"      src="assets/stickers/asv.png"      alt="">
+      <img class="st st-banana"   src="assets/stickers/banana.png"   alt="">
+      <img class="st st-disco"    src="assets/stickers/disco.png"    alt="">
+      <img class="st st-love22"   src="assets/stickers/love22.png"   alt="I love Catch 22">
+      <img class="st st-year22"   src="assets/stickers/year22.png"   alt="1 year Catch 22">
+      <img class="st st-blond"    src="assets/stickers/blond.png"    alt="Blond">
+      <img class="st st-lastcall" src="assets/stickers/lastcall.png" alt="Last Call Lovers">
+      <img class="st st-kanye"    src="assets/stickers/kanye.png"    alt="">
+      <img class="st st-flashing" src="assets/stickers/flashing.png" alt="Flashing Lights">
+      <img class="st st-imcatch"  src="assets/stickers/imcatch.png"  alt="I'm catch!">
 
-    <!-- Equalizer -->
-    <div class="eq-bars">
-      <div class="eq-bar"></div>
-      <div class="eq-bar"></div>
-      <div class="eq-bar"></div>
-      <div class="eq-bar"></div>
-      <div class="eq-bar"></div>
-    </div>
+      <div class="readout" id="readout">CATCH22 ▸ READY</div>
 
-    <!-- Controls -->
-    <div class="controls">
-      <!-- Rewind -->
-      <div class="ctrl-btn" id="btnRew" onclick="rewind()">
+      <!-- слой 5 — управление поверх физических кнопок -->
+      <button class="key k1" id="btnRew"  type="button" aria-label="Назад">
         <svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
-      </div>
-      <!-- Play -->
-      <div class="ctrl-btn play-btn" id="btnPlay" onclick="togglePlay()">
+      </button>
+      <button class="key k2" id="btnPlay" type="button" aria-label="Играть">
         <svg viewBox="0 0 24 24" id="playIcon"><path d="M8 5v14l11-7z"/></svg>
-      </div>
-      <!-- Stop -->
-      <div class="ctrl-btn" id="btnStop" onclick="stopPlay()">
+      </button>
+      <button class="key k3" id="btnStop" type="button" aria-label="Стоп">
         <svg viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>
-      </div>
-    </div>
+      </button>
 
-    <!-- Volume -->
-    <div class="volume-area">
-      <span class="vol-label">VOL</span>
-      <div class="vol-track">
-        <div class="vol-fill" id="volFill"></div>
-        <div class="vol-knob" id="volKnob"></div>
+      <div class="vol">
+        <div class="vol-track" id="volTrack" role="slider" aria-label="Громкость" aria-valuemin="0" aria-valuemax="100" aria-valuenow="75" tabindex="0">
+          <div class="vol-fill" id="volFill"></div>
+          <div class="vol-knob" id="volKnob"></div>
+        </div>
       </div>
-    </div>
 
-    <!-- Headphone jack -->
-    <div class="hp-jack"></div>
+    </div>
   </div>
+
+  <!-- ====================  ПРИГЛАШЕНИЕ  ==================== -->
+  <div class="card">
+    <div class="title">Первый год <em>Catch 22</em> записан —<br>пора перевернуть пластинку!</div>
+    <div class="rule"></div>
+    <p class="lead">23 октября отмечаем день рождения<br>и зовём друзей — <b>вы в списке.</b></p>
+    <div class="facts">
+      <div class="fact"><i>🕘</i><span>Сбор гостей — 20:00</span></div>
+      <div class="fact"><i>📍</i><span>Наб. Фонтанки, 86</span></div>
+    </div>
+    <div class="hint" id="hint">▲ нажми PLAY на плеере ▲</div>
+  </div>
+
+  <div class="footer">CATCH 22 © MMXXV</div>
 </div>
 
-<!-- Invitation Card -->
-<div class="invite-card">
-  <div class="invite-title">
-    Первый год <span class="accent">Catch 22</span> записан —<br>
-    пора перевернуть пластинку!
-  </div>
-  <div class="divider"></div>
-  <div class="invite-text">
-    23 октября отмечаем день рождения<br>
-    и зовём друзей — <span style="color: var(--walkman-accent);">вы в списке.</span>
-  </div>
-  <div class="invite-details">
-    <div class="detail-row">
-      <span class="detail-icon">🕘</span>
-      <span>Сбор гостей — 20:00</span>
-    </div>
-    <div class="detail-row">
-      <span class="detail-icon">📍</span>
-      <span>Наб. Фонтанки, 86</span>
-    </div>
-  </div>
-  <div class="play-hint">↑ нажми PLAY на кассете ↑</div>
+<div class="soundwall" id="soundwall">
+  <button type="button" id="unlockBtn">🔊 ВКЛЮЧИТЬ ЗВУК</button>
 </div>
 
-<div class="footer">CATCH 22 © MMXXV</div>
+<audio id="track" src="assets/hbd.mp3" loop preload="auto" playsinline></audio>
 
 <script>
-// ====== HAPPY BIRTHDAY TO YOU — Web Audio API ======
-let audioCtx = null;
-let isPlaying = false;
-let melodyTimeout = null;
-let noteTimeouts = [];
+(function () {
+  'use strict';
 
-const NOTE_FREQ = {
-  'C3': 130.81, 'D3': 146.83, 'E3': 164.81, 'F3': 174.61, 'G3': 196.00,
-  'A3': 220.00, 'B3': 246.94,
-  'C4': 261.63, 'D4': 293.66, 'E4': 329.63, 'F4': 349.23, 'G4': 392.00,
-  'A4': 440.00, 'Bb4': 466.16, 'B4': 493.88,
-  'C5': 523.25, 'D5': 587.33, 'E5': 659.25, 'F5': 698.46, 'G5': 783.99,
-  'Gb4': 369.99, 'Eb4': 311.13, 'Ab4': 415.30
-};
+  var player   = document.getElementById('player');
+  var readout  = document.getElementById('readout');
+  var playIcon = document.getElementById('playIcon');
+  var btnPlay  = document.getElementById('btnPlay');
+  var btnStop  = document.getElementById('btnStop');
+  var btnRew   = document.getElementById('btnRew');
+  var volTrack = document.getElementById('volTrack');
+  var volFill  = document.getElementById('volFill');
+  var volKnob  = document.getElementById('volKnob');
+  var wall     = document.getElementById('soundwall');
+  var unlock   = document.getElementById('unlockBtn');
+  var hint     = document.getElementById('hint');
 
-// Happy Birthday to You melody in key of C
-// "Happy Birthday to you, Happy Birthday to you,
-//  Happy Birthday dear [name], Happy Birthday to you"
-const MELODY = [
-  // Phrase 1: "Happy Birthday to you"
-  { note: 'C4', dur: 0.3 },
-  { note: 'C4', dur: 0.15 },
-  { note: 'D4', dur: 0.45 },
-  { note: 'C4', dur: 0.45 },
-  { note: 'F4', dur: 0.45 },
-  { note: 'E4', dur: 0.9 },
+  var ICON_PLAY  = 'M8 5v14l11-7z';
+  var ICON_PAUSE = 'M6 19h4V5H6v14zm8-14v14h4V5h-4z';
 
-  // Phrase 2: "Happy Birthday to you"
-  { note: 'C4', dur: 0.3 },
-  { note: 'C4', dur: 0.15 },
-  { note: 'D4', dur: 0.45 },
-  { note: 'C4', dur: 0.45 },
-  { note: 'G4', dur: 0.45 },
-  { note: 'F4', dur: 0.9 },
+  /* ---------- звук ---------- */
+  var track = document.getElementById('track');
+  var volume = 0.75;
+  var audioBroken = false;
+  var wantPlay = false;
 
-  // Phrase 3: "Happy Birthday dear Catch"
-  { note: 'C4', dur: 0.3 },
-  { note: 'C4', dur: 0.15 },
-  { note: 'C5', dur: 0.45 },
-  { note: 'A4', dur: 0.45 },
-  { note: 'F4', dur: 0.45 },
-  { note: 'E4', dur: 0.45 },
-  { note: 'D4', dur: 0.9 },
+  track.volume = volume;
+  track.load();
 
-  // Phrase 4: "Happy Birthday to you"
-  { note: 'Bb4', dur: 0.3 },
-  { note: 'Bb4', dur: 0.15 },
-  { note: 'A4', dur: 0.45 },
-  { note: 'F4', dur: 0.45 },
-  { note: 'G4', dur: 0.45 },
-  { note: 'F4', dur: 0.9 },
-];
-
-function initAudio() {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  function setReadout(text, marquee) {
+    readout.textContent = text;
+    readout.classList.toggle('marquee', !!marquee);
   }
-  if (audioCtx.state === 'suspended') {
-    audioCtx.resume();
+
+  function uiPlaying(on) {
+    player.classList.toggle('is-playing', on);
+    btnPlay.classList.toggle('on', on);
+    playIcon.firstElementChild.setAttribute('d', on ? ICON_PAUSE : ICON_PLAY);
+    if (on) setReadout('♫ CATCH 22 — HAPPY BIRTHDAY MIX · 23.10 · FONTANKA 86 · 20:00 ♫', true);
+    else    setReadout('CATCH22 ▸ READY', false);
   }
-}
 
-function playNote(freq, startTime, duration, volume = 0.15) {
-  if (!audioCtx) return;
-
-  // Main oscillator — warm square-ish tone (cassette feel)
-  const osc1 = audioCtx.createOscillator();
-  osc1.type = 'triangle';
-  osc1.frequency.value = freq;
-
-  // Slight detune for warmth
-  const osc2 = audioCtx.createOscillator();
-  osc2.type = 'sine';
-  osc2.frequency.value = freq * 1.002;
-
-  // Gain envelope
-  const gainNode = audioCtx.createGain();
-  gainNode.gain.setValueAtTime(0, startTime);
-  gainNode.gain.linearRampToValueAtTime(volume, startTime + 0.02);
-  gainNode.gain.setValueAtTime(volume, startTime + duration - 0.05);
-  gainNode.gain.linearRampToValueAtTime(0, startTime + duration);
-
-  // Filter for lo-fi cassette sound
-  const filter = audioCtx.createBiquadFilter();
-  filter.type = 'lowpass';
-  filter.frequency.value = 2000;
-  filter.Q.value = 0.5;
-
-  // Slight tape hiss
-  const hissGain = audioCtx.createGain();
-  hissGain.gain.value = 0.008;
-
-  osc1.connect(filter);
-  osc2.connect(filter);
-  filter.connect(gainNode);
-  gainNode.connect(audioCtx.destination);
-
-  osc1.start(startTime);
-  osc2.start(startTime);
-  osc1.stop(startTime + duration + 0.01);
-  osc2.stop(startTime + duration + 0.01);
-}
-
-function playMelody() {
-  initAudio();
-  if (!audioCtx) return;
-
-  let time = audioCtx.currentTime + 0.1;
-
-  MELODY.forEach((item, i) => {
-    const freq = NOTE_FREQ[item.note];
-    if (freq) {
-      // Add slight humanized timing
-      const humanize = (Math.random() - 0.5) * 0.02;
-      playNote(freq, time + humanize, item.dur, 0.12);
+  function tryPlay() {
+    var p = track.play();
+    if (p && p.catch) {
+      p.catch(function (err) {
+        uiPlaying(false);
+        if (err && err.name === 'NotAllowedError') wall.classList.add('show');
+        else if (audioBroken) startFallback();
+      });
     }
-    time += item.dur + 0.05; // small gap between notes
+  }
+
+  function play() {
+    wantPlay = true;
+    if (audioBroken) { startFallback(); return; }
+    tryPlay();
+  }
+
+  function pause() {
+    wantPlay = false;
+    track.pause();
+    stopFallback();
+    uiPlaying(false);
+  }
+
+  function stop() {
+    wantPlay = false;
+    track.pause();
+    try { track.currentTime = 0; } catch (e) {}
+    stopFallback();
+    uiPlaying(false);
+  }
+
+  btnPlay.addEventListener('click', function () {
+    wall.classList.remove('show');
+    if (player.classList.contains('is-playing')) pause(); else play();
   });
 
-  // Calculate total duration
-  const totalDur = MELODY.reduce((sum, n) => sum + n.dur + 0.05, 0);
+  btnStop.addEventListener('click', stop);
 
-  // Loop the melody
-  melodyTimeout = setTimeout(() => {
-    if (isPlaying) {
-      playMelody();
+  btnRew.addEventListener('click', function () {
+    try { track.currentTime = Math.max(0, track.currentTime - 3); } catch (e) {}
+    flash('◂◂ REW');
+  });
+
+
+  var flashTimer = null;
+  function flash(msg) {
+    setReadout(msg, false);
+    clearTimeout(flashTimer);
+    flashTimer = setTimeout(function () {
+      uiPlaying(player.classList.contains('is-playing'));
+    }, 900);
+  }
+
+  /* UI синхронен с реальным состоянием аудио */
+  track.addEventListener('playing', function () { uiPlaying(true); });
+  track.addEventListener('pause',   function () { if (!fb.playing) uiPlaying(false); });
+  track.addEventListener('ended',   function () { uiPlaying(false); });
+
+  track.addEventListener('error', function () {
+    audioBroken = true;
+    if (player.classList.contains('is-playing')) startFallback();
+  });
+
+  unlock.addEventListener('click', function () {
+    wall.classList.remove('show');
+    play();
+  });
+
+  /* ---------- запасной синтезатор, если mp3 не загрузился ---------- */
+  var fb = { ctx: null, timer: null, playing: false };
+  var NOTE = {'C4':261.63,'D4':293.66,'E4':329.63,'F4':349.23,'G4':392.00,'A4':440.00,'A#4':466.16,'B4':493.88,'C5':523.25,'D5':587.33};
+  var MEL = [
+    ['C4',.3],['C4',.15],['D4',.45],['C4',.45],['F4',.45],['E4',.9],
+    ['C4',.3],['C4',.15],['D4',.45],['C4',.45],['G4',.45],['F4',.9],
+    ['C4',.3],['C4',.15],['C5',.45],['A4',.45],['F4',.45],['E4',.45],['D4',.9],
+    ['A#4',.3],['A#4',.15],['A4',.45],['F4',.45],['G4',.45],['F4',.9]
+  ];
+
+  function fbNote(freq, at, dur) {
+    if (!fb.ctx) return;
+    var o = fb.ctx.createOscillator(), g = fb.ctx.createGain();
+    o.type = 'triangle';
+    o.frequency.value = freq;
+    g.gain.setValueAtTime(0, at);
+    g.gain.linearRampToValueAtTime(0.16, at + 0.02);
+    g.gain.setValueAtTime(0.16, at + Math.max(0.06, dur - 0.05));
+    g.gain.linearRampToValueAtTime(0, at + dur);
+    o.connect(g); g.connect(fb.ctx.destination);
+    o.start(at); o.stop(at + dur + 0.02);
+  }
+
+  function fbLoop() {
+    if (!fb.playing || !fb.ctx) return;
+    var t = fb.ctx.currentTime + 0.12, total = 0;
+    for (var i = 0; i < MEL.length; i++) {
+      fbNote(NOTE[MEL[i][0]], t, MEL[i][1]);
+      t += MEL[i][1] + 0.05;
+      total += MEL[i][1] + 0.05;
     }
-  }, totalDur * 1000 + 500);
-}
-
-function stopMelody() {
-  if (melodyTimeout) {
-    clearTimeout(melodyTimeout);
-    melodyTimeout = null;
+    fb.timer = setTimeout(fbLoop, total * 1000 + 400);
   }
-  noteTimeouts.forEach(t => clearTimeout(t));
-  noteTimeouts = [];
-}
 
-// ====== UI CONTROLS ======
-const walkman = document.getElementById('walkman');
-const cassetteWindow = document.getElementById('cassetteWindow');
-const btnPlay = document.getElementById('btnPlay');
-const playIcon = document.getElementById('playIcon');
-const displayText = document.getElementById('displayText');
-const hub1 = document.getElementById('hub1');
-const hub2 = document.getElementById('hub2');
-
-function togglePlay() {
-  if (isPlaying) {
-    stopPlay();
-  } else {
-    startPlay();
+  function startFallback() {
+    try {
+      if (!fb.ctx) fb.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      if (fb.ctx.state === 'suspended') fb.ctx.resume();
+    } catch (e) { return; }
+    if (fb.playing) return;
+    fb.playing = true;
+    uiPlaying(true);
+    hint.textContent = 'звук — резервный синтезатор';
+    fbLoop();
   }
-}
 
-function startPlay() {
-  isPlaying = true;
-  walkman.classList.add('playing');
-  cassetteWindow.classList.add('playing');
-
-  // Animate reels
-  hub1.style.animation = 'spin 1.2s linear infinite';
-  hub2.style.animation = 'spin 0.8s linear infinite reverse';
-
-  // Update button icon to pause
-  playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
-  btnPlay.classList.add('active');
-
-  // Update display
-  displayText.textContent = '♫ CATCH 22 — HBD ♫';
-  displayText.classList.add('scrolling');
-
-  // Play melody
-  playMelody();
-}
-
-function stopPlay() {
-  isPlaying = false;
-  walkman.classList.remove('playing');
-  cassetteWindow.classList.remove('playing');
-
-  // Stop reels
-  hub1.style.animation = 'none';
-  hub2.style.animation = 'none';
-
-  // Reset button icon
-  playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
-  btnPlay.classList.remove('active');
-
-  // Update display
-  displayText.textContent = 'CATCH22 ▶ READY';
-  displayText.classList.remove('scrolling');
-
-  // Stop melody
-  stopMelody();
-}
-
-function rewind() {
-  if (isPlaying) {
-    stopPlay();
-    setTimeout(() => {
-      displayText.textContent = '◀◀ REWIND...';
-      setTimeout(() => {
-        displayText.textContent = 'CATCH22 ▶ READY';
-      }, 1000);
-    }, 200);
+  function stopFallback() {
+    fb.playing = false;
+    clearTimeout(fb.timer);
   }
-}
 
-// ====== VOLUME CONTROL ======
-const volTrack = document.querySelector('.vol-track');
-let volume = 0.7;
-
-function updateVolume(e) {
-  const rect = volTrack.getBoundingClientRect();
-  const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-  volume = Math.max(0, Math.min(1, x / rect.width));
-  document.getElementById('volFill').style.width = (volume * 100) + '%';
-  document.getElementById('volKnob').style.left = (volume * 100) + '%';
-}
-
-volTrack.addEventListener('mousedown', (e) => {
-  updateVolume(e);
-  const move = (ev) => updateVolume(ev);
-  const up = () => { document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); };
-  document.addEventListener('mousemove', move);
-  document.addEventListener('mouseup', up);
-});
-
-volTrack.addEventListener('touchstart', (e) => {
-  e.preventDefault();
-  updateVolume(e);
-  const move = (ev) => { ev.preventDefault(); updateVolume(ev); };
-  const end = () => { volTrack.removeEventListener('touchmove', move); volTrack.removeEventListener('touchend', end); };
-  volTrack.addEventListener('touchmove', move);
-  volTrack.addEventListener('touchend', end);
-}, { passive: false });
-
-// ====== AUTO-SCROLL TO INVITE ======
-setTimeout(() => {
-  const card = document.querySelector('.invite-card');
-  if (card) {
-    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  /* ---------- громкость ---------- */
+  function setVolume(v) {
+    volume = Math.max(0, Math.min(1, v));
+    track.volume = volume;
+    volFill.style.width = (volume * 100) + '%';
+    volKnob.style.left = (volume * 100) + '%';
+    volTrack.setAttribute('aria-valuenow', Math.round(volume * 100));
   }
-}, 2000);
+
+  function volumeFromEvent(e) {
+    var r = volTrack.getBoundingClientRect();
+    var x = e.clientX - r.left;
+    setVolume(x / r.width);
+  }
+
+  var dragging = false;
+  volTrack.addEventListener('pointerdown', function (e) {
+    dragging = true;
+    if (volTrack.setPointerCapture) volTrack.setPointerCapture(e.pointerId);
+    volumeFromEvent(e);
+  });
+  volTrack.addEventListener('pointermove', function (e) { if (dragging) volumeFromEvent(e); });
+  volTrack.addEventListener('pointerup', function () { dragging = false; });
+  volTrack.addEventListener('pointercancel', function () { dragging = false; });
+  volTrack.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') { setVolume(volume + 0.05); e.preventDefault(); }
+    if (e.key === 'ArrowLeft')  { setVolume(volume - 0.05); e.preventDefault(); }
+  });
+
+  setVolume(0.75);
+  setReadout('CATCH22 ▸ READY', false);
+
+  /* Прогрев аудио первым жестом вне транспорта (iOS/Safari):
+     play() из пользовательского жеста разрешает последующий play() из кода. */
+  var primed = false;
+  function prime(e) {
+    if (primed || audioBroken) return;
+    if (e && e.target && e.target.closest && e.target.closest('.key, .vol')) return;
+    primed = true;
+    var prev = track.volume;
+    track.volume = 0;
+    var restore = function (keepPlaying) {
+      return function () {
+        if (!keepPlaying && !wantPlay) { track.pause(); try { track.currentTime = 0; } catch (err) {} }
+        track.volume = prev;
+      };
+    };
+    var p = track.play();
+    if (p && p.then) p.then(restore(false), restore(true));
+    else restore(true)();
+  }
+  ['pointerdown', 'touchstart', 'keydown'].forEach(function (ev) {
+    window.addEventListener(ev, prime, { passive: true });
+  });
+})();
 </script>
 
 </body>
