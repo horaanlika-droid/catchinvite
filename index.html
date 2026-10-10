@@ -20,7 +20,7 @@
     <div class="reel reel-a" aria-hidden="true"><img src="assets/layers/reel.webp" alt=""></div>
     <div class="reel reel-b" aria-hidden="true"><img src="assets/layers/reel.webp" alt=""></div>
     <div class="glass" aria-hidden="true"></div>
-    <div class="cassette-label" aria-hidden="true"><span>ДЕНЬ РОЖДЕНИЯ</span><strong>CATCH 22</strong><i>★</i></div>
+    <img class="st st-nam1god" src="assets/stickers/nam1god.png" alt="Нам 1 год!">
 
     <img class="st st-lastcall" src="assets/stickers/lastcall.png" alt="Last Call Lovers">
     <img class="st st-love22" src="assets/stickers/love22.png" alt="I love Catch 22">
@@ -28,7 +28,7 @@
     <img class="st st-blond" src="assets/stickers/blond.png" alt="Blond">
     <img class="st st-flashing" src="assets/stickers/flashing.png" alt="Flashing Lights">
 
-    <div class="maker"><span class="maker-name">CATCH 22 ★</span><span class="maker-sub"><i class="power-light" aria-hidden="true"></i> STEREO CASSETTE PLAYER</span></div>
+    <div class="maker"><span class="maker-name">CATCH 22 ★</span></div>
     <img class="st st-year22" src="assets/stickers/year22.png" alt="1 year Catch 22">
 
     <div class="transport">
@@ -36,8 +36,6 @@
       <button class="key key-play" id="btnPlay" type="button" aria-label="Играть" aria-pressed="false"><svg viewBox="0 0 24 24" id="playIcon" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><span>PLAY / PAUSE</span></button>
       <button class="key" id="btnStop" type="button" aria-label="Стоп"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg><span>STOP</span></button>
     </div>
-    <div class="hint" id="hint">НАЖМИ PLAY. ЭТО ДЛЯ ТЕБЯ.</div>
-
     <div class="audio-panel">
       <div class="display"><span class="display-label" aria-hidden="true">TAPE / STEREO</span><div class="readout-clip"><div class="readout" id="readout" role="status">CATCH22 ▸ READY</div></div></div>
       <div class="vol"><div class="volume-label" aria-hidden="true"><span>VOLUME</span><span>− &nbsp; +</span></div><div class="vol-track" id="volTrack" role="slider" aria-label="Громкость" aria-valuemin="0" aria-valuemax="100" aria-valuenow="75" tabindex="0"><div class="vol-fill" id="volFill"></div><div class="vol-knob" id="volKnob"></div></div></div>
@@ -49,8 +47,8 @@
     <img class="st st-asv" src="assets/stickers/asv.png" alt="">
     <div class="info-panel" aria-label="Дата и место">
       <div><span class="info-big">23.10</span><span class="info-sub">СБОР ГОСТЕЙ — 20:00</span></div>
-      <div><span class="info-big">CATCH 22</span><span class="info-sub">НАБ. ФОНТАНКИ, 86</span></div>
-      <div><span class="info-big">SIDE B ★</span><span class="info-sub">ПЕРЕВЕРНИ ПЛАСТИНКУ</span></div>
+      <div><span class="info-big">CATCH 22</span><i class="info-dash" aria-hidden="true"></i><span class="info-sub">НАБ. ФОНТАНКИ, 86</span></div>
+      <div><span class="info-sub">ПЕРЕВЕРНИ ПЛАСТИНКУ</span><span class="info-big">SIDE B ★</span></div>
     </div>
     <div class="serial"><span>CATCH 22 © MMXXV</span><span>365 DAYS ON REPEAT</span></div>
   </section>
@@ -213,7 +211,7 @@
     if (fb.playing) return;
     fb.playing = true;
     uiPlaying(true);
-    hint.textContent = 'звук — резервный синтезатор';
+    if (hint) hint.textContent = 'звук — резервный синтезатор';
     fbLoop();
   }
 
