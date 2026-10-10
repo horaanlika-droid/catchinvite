@@ -3,401 +3,81 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0a0908">
+<meta name="theme-color" content="#171715">
 <title>Catch 22 — День Рождения</title>
 <link rel="preload" href="assets/hbd.mp3" as="audio">
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto+Mono:wght@400;500;700&family=Russo+One&display=swap');
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  :root {
-    --amber: #ff6b00;
-    --amber-soft: #ff9248;
-    --lcd: #7dff8a;
-  }
-
-  html { -webkit-text-size-adjust: 100%; }
-
-  body {
-    min-height: 100vh;
-    min-height: 100dvh;
-    font-family: 'Roboto Mono', ui-monospace, monospace;
-    color: #fff;
-    background: #0a0908 url('assets/bg.jpg') center / cover no-repeat fixed;
-    -webkit-tap-highlight-color: transparent;
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-    user-select: none;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(120% 80% at 50% 0%, rgba(255,107,0,.16), transparent 60%),
-      linear-gradient(180deg, rgba(6,5,4,.72) 0%, rgba(6,5,4,.86) 45%, #060504 100%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .page {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: max(14px, env(safe-area-inset-top)) 0 calc(28px + env(safe-area-inset-bottom));
-  }
-
-  /* =====================  ПЛЕЕР (всё в координатах 690×690)  ===================== */
-  .hero {
-    width: min(94vw, 440px);
-    position: relative;
-  }
-
-  .hero::after {
-    content: '';
-    position: absolute;
-    inset: 6% -12% -6% -12%;
-    background: radial-gradient(60% 45% at 50% 45%, rgba(255,122,20,.20), transparent 70%);
-    filter: blur(26px);
-    z-index: -1;
-    pointer-events: none;
-  }
-
-  .player {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    filter: drop-shadow(0 24px 40px rgba(0,0,0,.75));
-    transition: filter .6s ease;
-  }
-  .player.is-playing {
-    filter: drop-shadow(0 24px 40px rgba(0,0,0,.75)) drop-shadow(0 0 22px rgba(255,110,20,.22));
-  }
-
-  /* слой 1 — динамический: бобины, вращаются */
-  .reel-layer { position: absolute; inset: 0; z-index: 1; }
-  .reel {
-    position: absolute;
-    width: 37.1%;                 /* 256/690 */
-    aspect-ratio: 1;
-    will-change: transform;
-    transform: translateZ(0);
-  }
-  .reel img { width: 100%; height: 100%; display: block; }
-  .reel-a { left: 13.19%; top: 20.87%; }   /* центр (219,272) */
-  .reel-b { left: 50.72%; top: 20.87%; }   /* центр (478,272) */
-
-  @keyframes spin-ccw { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
-  .reel-a { animation: spin-ccw 5.6s linear infinite; animation-play-state: paused; }
-  .reel-b { animation: spin-ccw 3.9s linear infinite; animation-play-state: paused; }
-  .is-playing .reel-a,
-  .is-playing .reel-b { animation-play-state: running; }
-
-  /* слой 2 — статика: корпус с вырезанными окнами под бобины */
-  .plate { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; display: block; }
-
-  /* слой 3 — блики стекла кассетного окна */
-  .gloss {
-    position: absolute;
-    left: 6.1%; top: 13.3%; width: 87.4%; height: 49.3%;
-    border-radius: 3% / 4%;
-    z-index: 3;
-    pointer-events: none;
-    background:
-      linear-gradient(112deg, rgba(255,255,255,.12) 0%, rgba(255,255,255,.03) 26%, transparent 42%),
-      linear-gradient(292deg, rgba(255,240,220,.06) 0%, transparent 34%);
-    box-shadow: inset 0 0 22px rgba(0,0,0,.30);
-    overflow: hidden;
-  }
-  .gloss::after {
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(118deg, transparent 38%, rgba(255,255,255,.05) 46%, transparent 54%);
-  }
-
-  /* слой 4 — статические стикеры на корпусе (позиции в % от 690) */
-  .st {
-    position: absolute;
-    z-index: 4;
-    pointer-events: none;
-    height: auto;
-    width: auto;
-    filter: contrast(.94) saturate(.92) drop-shadow(0 1px 1px rgba(0,0,0,.6)) drop-shadow(0 3px 5px rgba(0,0,0,.42));
-    mix-blend-mode: multiply;
-    max-width: none;
-  }
-  .st-asv      { left: 3.19%;  top: 2.03%;   height: 7.83%;  transform: rotate(-6deg); }
-  .st-banana   { left: 21.74%; top: 1.16%;   height: 11.30%; transform: rotate(10deg); }
-  .st-disco    { left: 34.78%; top: 0.58%;   height: 10.14%; transform: rotate(-4deg); }
-  .st-love22   { left: 76.52%; top: 0%;      height: 12.75%; transform: rotate(7deg); }
-  .st-year22   { left: 2.03%;  top: 62.32%;  height: 14.49%; transform: rotate(-6deg); }
-  .st-blond    { left: 21.74%; top: 70.43%;  height: 5.80%;  transform: rotate(-4deg); }
-  .st-lastcall { left: 68.12%; top: 63.19%;  height: 13.91%; transform: rotate(4deg); }
-  .st-kanye    { left: 86.96%; top: 33.62%;  height: 12.17%; transform: rotate(6deg); }
-  .st-flashing { left: 76.81%; top: 58.55%;  height: 5.80%;  transform: rotate(-8deg); }
-  .st-imcatch  { left: 67.83%; top: 86.38%;  height: 10.72%; transform: rotate(5deg); }
-
-  /* статичный блик по ламинату стикеров */
-  .st::after { content: none; }
-
-  /* надпись-статус на корпусе под окном */
-  .readout {
-    position: absolute;
-    left: 8.7%; top: 90.6%; width: 35%;
-    z-index: 5;
-    font-family: 'Press Start 2P', monospace;
-    font-size: clamp(4.5px, 1.3vw, 7.5px);
-    color: var(--lcd);
-    text-shadow: 0 0 6px rgba(90,255,120,.45);
-    white-space: nowrap;
-    overflow: hidden;
-    opacity: .9;
-  }
-  .readout.marquee { animation: marquee 9s linear infinite; }
-  @keyframes marquee {
-    0%   { transform: translateX(100%); }
-    100% { transform: translateX(-100%); }
-  }
-
-  /* слой 5 — управление: 5 невидимых зон поверх физических кнопок (y 552–584) */
-  .key {
-    position: absolute;
-    top: 80.0%; height: 4.64%; width: 10.58%;
-    z-index: 6;
-    border: 0; background: transparent;
-    border-radius: 4px;
-    cursor: pointer;
-    color: rgba(235,230,220,.55);
-    display: flex; align-items: center; justify-content: center;
-    font-family: inherit;
-    transition: background .15s ease, color .2s ease;
-  }
-  .key svg { width: 46%; height: 46%; fill: currentColor; display: block; }
-  .key:active, .key.pressed { background: rgba(0,0,0,.25); }
-  .key.on { color: #ffb066; }
-  .key.on::after {
-    content: '';
-    position: absolute; inset: 0;
-    border-radius: 4px;
-    box-shadow: 0 0 14px rgba(255,107,0,.45) inset;
-    pointer-events: none;
-  }
-  .k1 { left: 31.30%; }   /* 216 px */
-  .k2 { left: 44.78%; }   /* 309 px */
-  .k3 { left: 58.26%; }   /* 402 px */
-
-  /* громкость — на нижней пластине слева от разъёма */
-  .vol {
-    position: absolute;
-    left: 8.7%; top: 95.4%; width: 35%; height: 2.4%;
-    z-index: 6;
-    display: flex; align-items: center;
-  }
-  .vol-track {
-    flex: 1; height: 100%; min-height: 14px;
-    position: relative; cursor: pointer; touch-action: none;
-    display: flex; align-items: center;
-  }
-  .vol-track::before {
-    content: '';
-    position: absolute; left: 0; right: 0; top: 50%;
-    height: 3px; margin-top: -1.5px; border-radius: 2px;
-    background: #1d1b19;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.25);
-  }
-  .vol-fill {
-    position: absolute; left: 0; top: 50%;
-    height: 3px; margin-top: -1.5px; border-radius: 2px;
-    width: 75%;
-    background: linear-gradient(90deg, #6a3a12, var(--amber));
-  }
-  .vol-knob {
-    position: absolute; top: 50%; left: 75%;
-    width: 13px; height: 13px; margin: -6.5px 0 0 -6.5px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 36% 32%, #8f8a80, #3a3733 70%, #24221f);
-    box-shadow: 0 2px 5px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.16);
-  }
-
-  /* =====================  ПРИГЛАШЕНИЕ  ===================== */
-  .card {
-    width: min(94vw, 440px);
-    margin: 22px 0 0;
-    padding: 22px 20px 20px;
-    text-align: center;
-    border-radius: 18px;
-    background: linear-gradient(150deg, rgba(255,107,0,.075), rgba(255,61,0,.028) 55%, rgba(255,255,255,.014));
-    border: 1px solid rgba(255,107,0,.22);
-    backdrop-filter: blur(9px);
-    -webkit-backdrop-filter: blur(9px);
-    box-shadow: 0 18px 40px rgba(0,0,0,.45);
-    position: relative;
-    overflow: hidden;
-  }
-  .card::before {
-    content: '';
-    position: absolute;
-    inset: -60%;
-    background: conic-gradient(from 0deg, transparent 0deg, rgba(255,107,0,.055) 55deg, transparent 110deg);
-    animation: sweep 11s linear infinite;
-    pointer-events: none;
-  }
-  @keyframes sweep { to { transform: rotate(360deg); } }
-  .card > * { position: relative; z-index: 1; }
-
-  .title {
-    font-family: 'Russo One', sans-serif;
-    font-size: clamp(16px, 4.6vw, 23px);
-    line-height: 1.36;
-    margin-bottom: 14px;
-  }
-  .title em { font-style: normal; color: var(--amber); }
-
-  .rule {
-    width: 58%; height: 1px; margin: 0 auto 14px;
-    background: linear-gradient(90deg, transparent, rgba(255,107,0,.42), transparent);
-  }
-
-  .lead {
-    font-size: clamp(11.5px, 3.1vw, 14.5px);
-    line-height: 1.75;
-    color: rgba(255,255,255,.74);
-    margin-bottom: 18px;
-  }
-  .lead b { color: var(--amber-soft); font-weight: 500; }
-
-  .facts {
-    display: flex; flex-direction: column; gap: 9px;
-    font-size: clamp(11.5px, 3.1vw, 14.5px);
-    color: rgba(255,255,255,.92);
-  }
-  .fact { display: flex; align-items: center; justify-content: center; gap: 10px; }
-  .fact i { font-style: normal; font-size: 1.15em; }
-
-  .hint {
-    margin-top: 15px;
-    font-size: clamp(8.5px, 2.3vw, 11px);
-    letter-spacing: .16em;
-    color: rgba(255,255,255,.32);
-    animation: breathe 2.4s ease-in-out infinite;
-  }
-  @keyframes breathe { 0%,100% { opacity: .45; } 50% { opacity: 1; } }
-
-  .footer {
-    margin-top: 20px;
-    font-size: clamp(7px, 1.8vw, 9.5px);
-    letter-spacing: .34em;
-    color: rgba(255,255,255,.18);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .reel-a, .reel-b, .readout.marquee, .card::before, .hint { animation: none !important; }
-  }
-
-  /* подсказка, если браузер заблокировал звук */
-  .soundwall {
-    position: fixed; inset: 0; z-index: 50;
-    display: none;
-    align-items: center; justify-content: center;
-    background: rgba(4,3,3,.72);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    padding: 24px;
-  }
-  .soundwall.show { display: flex; }
-  .soundwall button {
-    font-family: 'Russo One', sans-serif;
-    font-size: clamp(13px, 3.6vw, 17px);
-    letter-spacing: .08em;
-    color: #fff;
-    padding: 16px 26px;
-    border: 1px solid rgba(255,107,0,.5);
-    border-radius: 14px;
-    background: linear-gradient(180deg, rgba(255,107,0,.22), rgba(255,61,0,.10));
-    box-shadow: 0 0 30px rgba(255,107,0,.18);
-    cursor: pointer;
-  }
-  .soundwall button:active { transform: scale(.97); }
-</style>
+<link rel="stylesheet" href="assets/player.css">
 </head>
 <body>
+<main class="player" id="player" aria-label="Кассетный плеер — приглашение Catch 22">
+  <i class="screw screw-tl" aria-hidden="true"></i><i class="screw screw-tr" aria-hidden="true"></i>
+  <i class="screw screw-bl" aria-hidden="true"></i><i class="screw screw-br" aria-hidden="true"></i>
+  <div class="edge-wear" aria-hidden="true"></div>
+  <div class="device-inner">
+    <header class="device-header" aria-label="Catch 22 — кассетный плеер">
+      <div class="speaker" aria-hidden="true"></div>
+      <div class="maker"><span class="maker-name">CATCH 22 ★</span><span class="maker-sub">STEREO CASSETTE PLAYER</span></div>
+      <img class="st st-lastcall" src="assets/worn/lastcall.webp" alt="Last Call Lovers">
+      <img class="st st-love22" src="assets/worn/love22.webp" alt="I love Catch 22">
+      <img class="st st-banana" src="assets/worn/banana.webp" alt="">
+      <img class="st st-blond" src="assets/worn/blond.webp" alt="Blond">
+      <img class="st st-flashing" src="assets/worn/flashing.webp" alt="Flashing Lights">
+    </header>
 
-<div class="page">
-
-  <!-- ====================  ПЛЕЕР  ==================== -->
-  <div class="hero">
-    <div class="player" id="player">
-
-      <!-- слой 1 — динамический: бобины -->
-      <div class="reel-layer" aria-hidden="true">
-        <div class="reel reel-a"><img src="assets/reel.png" alt=""></div>
-        <div class="reel reel-b"><img src="assets/reel.png" alt=""></div>
-      </div>
-
-      <!-- слой 2 — статика: корпус с отверстиями под бобины -->
-      <img class="plate" src="assets/player.png" alt="Кассетный плеер Catch 22">
-
-      <!-- слой 3 — блики стекла -->
-      <div class="gloss" aria-hidden="true"></div>
-
-      <!-- слой 4 — статические стикеры -->
-      <img class="st st-asv"      src="assets/stickers/asv.png"      alt="">
-      <img class="st st-banana"   src="assets/stickers/banana.png"   alt="">
-      <img class="st st-disco"    src="assets/stickers/disco.png"    alt="">
-      <img class="st st-love22"   src="assets/stickers/love22.png"   alt="I love Catch 22">
-      <img class="st st-year22"   src="assets/stickers/year22.png"   alt="1 year Catch 22">
-      <img class="st st-blond"    src="assets/stickers/blond.png"    alt="Blond">
-      <img class="st st-lastcall" src="assets/stickers/lastcall.png" alt="Last Call Lovers">
-      <img class="st st-kanye"    src="assets/stickers/kanye.png"    alt="">
-      <img class="st st-flashing" src="assets/stickers/flashing.png" alt="Flashing Lights">
-      <img class="st st-imcatch"  src="assets/stickers/imcatch.png"  alt="I'm catch!">
-
-      <div class="readout" id="readout">CATCH22 ▸ READY</div>
-
-      <!-- слой 5 — управление поверх физических кнопок -->
-      <button class="key k1" id="btnRew"  type="button" aria-label="Назад">
-        <svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
-      </button>
-      <button class="key k2" id="btnPlay" type="button" aria-label="Играть">
-        <svg viewBox="0 0 24 24" id="playIcon"><path d="M8 5v14l11-7z"/></svg>
-      </button>
-      <button class="key k3" id="btnStop" type="button" aria-label="Стоп">
-        <svg viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>
-      </button>
-
-      <div class="vol">
-        <div class="vol-track" id="volTrack" role="slider" aria-label="Громкость" aria-valuemin="0" aria-valuemax="100" aria-valuenow="75" tabindex="0">
-          <div class="vol-fill" id="volFill"></div>
-          <div class="vol-knob" id="volKnob"></div>
+    <div class="device-main">
+      <section class="deck-section" aria-label="Кассета и управление">
+        <div class="panel-caption"><span><i class="power-light" aria-hidden="true"></i> AUTO REVERSE</span><span>◂ SIDE A / SIDE B ▸</span></div>
+        <div class="cassette-window">
+          <img class="plate" src="assets/worn/deck.webp" alt="Чёрная кассета в потёртом корпусе">
+          <div class="reel-layer" aria-hidden="true">
+            <div class="reel reel-a"><img src="assets/worn/reel-a.webp" alt=""></div>
+            <div class="reel reel-b"><img src="assets/worn/reel-b.webp" alt=""></div>
+          </div>
+          <div class="cassette-label" aria-hidden="true"><span>ДЕНЬ РОЖДЕНИЯ</span><strong>CATCH 22</strong><i>★</i></div>
+          <div class="glass" aria-hidden="true"></div>
         </div>
+        <div class="deck-bottom"><span>FULL LOGIC CONTROL</span><span>METAL / CrO₂</span></div>
+        <div class="transport-panel">
+          <div class="transport">
+            <button class="key" id="btnRew" type="button" aria-label="Назад на 3 секунды"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg><span>REW</span></button>
+            <button class="key key-play" id="btnPlay" type="button" aria-label="Играть" aria-pressed="false"><svg viewBox="0 0 24 24" id="playIcon" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><span>PLAY / PAUSE</span></button>
+            <button class="key" id="btnStop" type="button" aria-label="Стоп"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg><span>STOP</span></button>
+          </div>
+          <div class="hint" id="hint">НАЖМИ PLAY. ЭТО ДЛЯ ТЕБЯ.</div>
+        </div>
+        <div class="audio-panel">
+          <div class="display"><span class="display-label" aria-hidden="true">TAPE / STEREO</span><div class="readout-clip"><div class="readout" id="readout" role="status">CATCH22 ▸ READY</div></div></div>
+          <div class="vol"><div class="volume-label" aria-hidden="true"><span>VOLUME</span><span>− &nbsp; +</span></div><div class="vol-track" id="volTrack" role="slider" aria-label="Громкость" aria-valuemin="0" aria-valuemax="100" aria-valuenow="75" tabindex="0"><div class="vol-fill" id="volFill"></div><div class="vol-knob" id="volKnob"></div></div></div>
+        </div>
+      </section>
+
+      <section class="label-section" aria-label="Приглашение на день рождения">
+        <div class="adhesive-mark" aria-hidden="true"></div>
+        <img class="st st-year22" src="assets/worn/year22.webp" alt="1 year Catch 22">
+        <article class="invitation">
+          <span class="tape tape-top" aria-hidden="true"></span>
+          <div class="label-meta"><span>ЛИЧНАЯ КОЛЛЕКЦИЯ</span><span>№ 001 / 22</span></div>
+          <h1>Первый год <em>Catch 22</em><br>записан — пора<br>перевернуть пластинку!</h1>
+          <div class="rule"></div>
+          <p class="lead">23 октября отмечаем день рождения<br class="desktop-break"> и зовём друзей — <b>вы в списке.</b></p>
+          <div class="facts"><p><span>КОГДА</span><strong>Сбор гостей — 20:00</strong></p><p><span>ГДЕ</span><strong>Наб. Фонтанки, 86</strong></p></div>
+          <div class="label-footer"><span>ХРАНИТЬ. НЕ ПЕРЕЗАПИСЫВАТЬ.</span><span class="handwritten">увидимся ♡</span></div>
+          <span class="tape tape-bottom" aria-hidden="true"></span>
+        </article>
+      </section>
+    </div>
+
+    <footer class="device-footer">
+      <div class="sticker-cluster" aria-hidden="true">
+        <img class="st st-disco" src="assets/worn/disco.webp" alt="">
+        <img class="st st-imcatch" src="assets/worn/imcatch.webp" alt="">
+        <img class="st st-kanye" src="assets/worn/kanye.webp" alt="">
       </div>
-
-    </div>
+      <div class="serial"><span>CATCH 22 © MMXXV</span><span>365 DAYS ON REPEAT</span><span class="headphone" aria-hidden="true"></span></div>
+    </footer>
   </div>
-
-  <!-- ====================  ПРИГЛАШЕНИЕ  ==================== -->
-  <div class="card">
-    <div class="title">Первый год <em>Catch 22</em> записан —<br>пора перевернуть пластинку!</div>
-    <div class="rule"></div>
-    <p class="lead">23 октября отмечаем день рождения<br>и зовём друзей — <b>вы в списке.</b></p>
-    <div class="facts">
-      <div class="fact"><i>🕘</i><span>Сбор гостей — 20:00</span></div>
-      <div class="fact"><i>📍</i><span>Наб. Фонтанки, 86</span></div>
-    </div>
-    <div class="hint" id="hint">▲ нажми PLAY на плеере ▲</div>
-  </div>
-
-  <div class="footer">CATCH 22 © MMXXV</div>
-</div>
-
-<div class="soundwall" id="soundwall">
-  <button type="button" id="unlockBtn">🔊 ВКЛЮЧИТЬ ЗВУК</button>
-</div>
-
+</main>
+<div class="soundwall" id="soundwall"><button type="button" id="unlockBtn">ВКЛЮЧИТЬ ЗВУК</button></div>
 <audio id="track" src="assets/hbd.mp3" loop preload="auto" playsinline></audio>
 
 <script>
@@ -437,6 +117,8 @@
   function uiPlaying(on) {
     player.classList.toggle('is-playing', on);
     btnPlay.classList.toggle('on', on);
+    btnPlay.setAttribute('aria-pressed', String(on));
+    btnPlay.setAttribute('aria-label', on ? 'Пауза' : 'Играть');
     playIcon.firstElementChild.setAttribute('d', on ? ICON_PAUSE : ICON_PLAY);
     if (on) setReadout('♫ CATCH 22 — HAPPY BIRTHDAY MIX · 23.10 · FONTANKA 86 · 20:00 ♫', true);
     else    setReadout('CATCH22 ▸ READY', false);
@@ -618,6 +300,5 @@
   });
 })();
 </script>
-
 </body>
 </html>
